@@ -1,0 +1,22 @@
+version: "3.9"
+
+services:
+    delivery-service:
+        container_name: delivery-service
+        restart: always
+        build: .
+        environment:
+            TZ: "Europe/Berlin"
+            DELIVERY_SERVICE_IP: 34.173.215.235
+            MONGO_DB_IP: 34.27.105.30
+            EUREKA_IP: 34.132.224.172
+        ports:
+            - "8080:8080"
+            - "587:587"
+        networks:
+            - asedelivery
+
+networks:
+    asedelivery:
+        external: false
+

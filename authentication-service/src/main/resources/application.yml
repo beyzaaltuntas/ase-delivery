@@ -1,0 +1,35 @@
+spring:
+    application:
+        name: authentication-service
+    data:
+        mongodb:
+            host: ${MONGO_DB_IP:127.0.0.1}
+            port: 27017
+            database: authentication-service-db
+            authentication-database: admin
+            auto-index-creation: true
+            username: root
+            password: example
+
+            #enable the usage of Spring Data Mongo Repository
+            repositories:
+                enabled: true
+server:
+    servlet:
+        context-path: /api/authentication-service
+    port: ${PORT:8081}
+eureka:
+    instance:
+        ip-address: ${AUTHENTICATION_SERVICE_IP:127.0.0.1}
+        hostname: ${EUREKA_IP:127.0.0.1}
+        preferIpAddress: true 
+    client:
+        service-url:
+            defaultZone: http://${eureka.instance.hostname}:8761/eureka
+app:
+    security:
+        jwt:
+            keyPath: keys/ase-jwt.jks
+            keyPassword: aseDelivery
+            alias: ase-oauth-jwt
+            passphrase: aseDelivery

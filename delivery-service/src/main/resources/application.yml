@@ -1,0 +1,41 @@
+spring:
+    application:
+        name: delivery-service
+    data:
+        mongodb:
+            host: ${MONGO_DB_IP:127.0.0.1}
+            port: 27017
+            database: delivery-service-db
+            authentication-database: admin
+            auto-index-creation: true
+            username: root
+            password: example
+
+            #enable the usage of Spring Data Mongo Repository
+            repositories:
+                enabled: true
+    mail:
+        protocol: smtp
+        host: smtp.gmail.com
+        port: 587
+        username: noreply.asedelivery@gmail.com
+        password: xmfqqfqhrgxmqxzj
+        properties:
+            smtp:
+                auth: true
+                starttls:
+                    enable: true
+                    required: true
+
+server:
+    servlet:
+        context-path: /api/delivery-service
+    port: ${PORT:8080}
+eureka:
+    instance:
+        ip-address: ${DELIVERY_SERVICE_IP:127.0.0.1}
+        hostname: ${EUREKA_IP:127.0.0.1}
+        preferIpAddress: true 
+    client:
+        serviceUrl:
+            defaultZone: http://${eureka.instance.hostname}:8761/eureka

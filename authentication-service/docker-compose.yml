@@ -1,0 +1,21 @@
+version: "3.9"
+
+services:
+    authentication-service:
+        container_name: authentication-service
+        restart: always
+        build: .
+        environment:
+            TZ: "Europe/Berlin"
+            EUREKA_IP: 34.132.224.172
+            AUTHENTICATION_SERVICE_IP: 34.69.52.189
+            MONGO_DB_IP: 34.27.105.30
+        ports:
+            - "8081:8081"
+        networks:
+            - asedelivery
+
+networks:
+    asedelivery:
+        external: false
+

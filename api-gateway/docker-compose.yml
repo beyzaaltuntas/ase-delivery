@@ -1,0 +1,21 @@
+version: "3.9"
+
+services:
+    api-gateway:
+        container_name: api-gateway
+        restart: always
+        build: .
+        environment:
+            TZ: "Europe/Berlin"
+            EUREKA_IP: 34.132.224.172
+            API_GATEWAY_IP: 34.71.63.255
+            FRONTEND_IP: 34.173.92.28
+        ports:
+            - "10789:10789"
+        networks:
+            - asedelivery
+
+networks:
+    asedelivery:
+        external: false
+

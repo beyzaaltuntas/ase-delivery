@@ -1,0 +1,18 @@
+version: "3.9"
+
+services:
+    discovery-service:
+        container_name: discovery-server
+        restart: always
+        build: .
+        environment:
+            TZ: "Europe/Berlin"
+        ports:
+            - "8761:8761"
+        networks:
+            - asedelivery
+
+networks:
+    asedelivery:
+        external: false
+

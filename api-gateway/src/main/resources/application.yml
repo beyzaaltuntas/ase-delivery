@@ -1,0 +1,43 @@
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+      routes:
+      - id: delivery-service
+        uri: lb://DELIVERY-SERVICE
+        predicates:
+        - Path=/api/delivery-service/**
+      - id: authentication-service
+        uri: lb://AUTHENTICATION-SERVICE
+        predicates:
+          - Path=/api/authentication-service/**
+      globalcors:
+          corsConfigurations:
+            '[/api/delivery-service/raspberry/**]':
+              allowedOrigins: "*"
+              allowedHeaders: "*"
+              allowedMethods:
+              - PATCH
+            '[/**]':
+              allowedOrigins: "http://${FRONTEND_IP:127.0.0.1}:3000"
+              allowedHeaders: "*"
+              allowedMethods:
+              - GET
+              - POST
+              - DELETE
+              - PUT
+              - PATCH
+eureka:
+  instance:
+    ip-address: ${API_GATEWAY_IP:127.0.0.1}
+    hostname: ${EUREKA_IP:127.0.0.1}
+    preferIpAddress: true
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://${eureka.instance.hostname}:8761/eureka
+    
+server:
+  port: ${PORT:10789}

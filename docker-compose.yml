@@ -1,0 +1,119 @@
+version: "3.9"
+
+services:
+    mongo:
+        container_name: mongo-delivery-service
+        image: mongo
+        restart: always
+        ports:
+            - 27017:27017
+        environment:
+            MONGO_INITDB_ROOT_USERNAME: root
+            MONGO_INITDB_ROOT_PASSWORD: example
+            TZ: "Europe/Berlin"
+        volumes:
+            - mongo-data:/data/db
+            - mongo-config:/data/configdb
+        networks:
+            - asedelivery
+
+    mongo-express:
+        container_name: mongo-express-delivery-service
+        image: mongo-express
+        restart: always
+        depends_on:
+            - mongo
+        environment:
+            ME_CONFIG_SITE_BASEURL: '/dev/mongo'
+            ME_CONFIG_MONGODB_ADMINUSERNAME: root
+            ME_CONFIG_MONGODB_ADMINPASSWORD: example
+            ME_CONFIG_MONGODB_URL: mongodb://root:example@mongo:27017/
+            TZ: "Europe/Berlin"
+        ports:
+            - 7676:8081
+        networks:
+            - asedelivery
+
+    discovery-service:
+        container_name: discovery-server
+        restart: always
+        depends_on:
+            - mongo
+        build: ./discovery-server/
+        environment:
+            TZ: "Europe/Berlin"
+        ports:
+            - "8761:8761"
+        networks:
+            - asedelivery
+
+    api-gateway:
+        container_name: api-gateway
+        restart: always
+        depends_on:
+            - discovery-service
+        build: ./api-gateway/
+        environment:
+            TZ: "Europe/Berlin"
+            EUREKA_IP: discovery-service
+            API_GATEWAY_IP: api-gateway
+            FRONTEND_IP: localhost
+        ports:
+            - "10789:10789"
+        networks:
+            - asedelivery
+        
+    authentication-service:
+        container_name: authentication-service
+        restart: always
+        depends_on:
+            - discovery-service
+        build: ./authentication-service/
+        environment:
+            TZ: "Europe/Berlin"
+            EUREKA_IP: discovery-service
+            AUTHENTICATION_SERVICE_IP: authentication-service
+            MONGO_DB_IP: mongo
+        ports:
+            - "8081:8081"
+        networks:
+            - asedelivery
+
+    delivery-service:
+        container_name: delivery-service
+        restart: always
+        depends_on:
+            - discovery-service
+        build: ./delivery-service/
+        environment:
+            TZ: "Europe/Berlin"
+            EUREKA_IP: discovery-service
+            DELIVERY_SERVICE_IP: delivery-service
+            MONGO_DB_IP: mongo
+        ports:
+            - "8080:8080"
+            - "587:587"
+        networks:
+            - asedelivery
+
+    frontend:
+        container_name: frontend
+        restart: always
+        build: ./ui-service/
+        environment:
+            TZ: "Europe/Berlin"
+            VITE_API_GATEWAY: localhost
+        ports:
+            - "3000:3000"
+        networks:
+            - asedelivery
+
+volumes:
+    mongo-data:
+        external: false
+    mongo-config:
+        external: false
+
+networks:
+    asedelivery:
+        external: false

@@ -1,0 +1,19 @@
+version: "3.9"
+
+services:
+    frontend:
+        container_name: frontend
+        restart: always
+        build: .
+        environment:
+            TZ: "Europe/Berlin"
+            VITE_API_GATEWAY: 34.71.63.255
+        ports:
+            - "3000:3000"
+        networks:
+            - asedelivery
+
+networks:
+    asedelivery:
+        external: false
+
